@@ -71,7 +71,7 @@
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="46"/>
                     </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0" Width="65" Height="59" Cursor="Hand"
+                    <Grid x:Name="Avatar" Grid.Column="0" Width="65" Height="59" Cursor="Hand"
                           MouseLeftButtonUp="Avatar_MouseLeftButtonUp"
                           MouseEnter="Avatar_MouseEnter" ToolTip="Нажми на Nook">
                         <Ellipse Fill="{StaticResource AvatarGradient}" Stroke="#DFC4FF" StrokeThickness="2">
