@@ -1,120 +1,186 @@
 <Window x:Class="Nook.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Nook" Width="390" Height="88" MinWidth="390"
+        Title="Nook" Width="432" Height="88" MinWidth="432"
         WindowStyle="None" ResizeMode="NoResize" AllowsTransparency="True"
         Background="Transparent" Topmost="True" ShowInTaskbar="True"
         WindowStartupLocation="Manual" Loaded="Window_Loaded">
     <Window.Resources>
-        <SolidColorBrush x:Key="TextMain" Color="#F6F3FF"/>
-        <SolidColorBrush x:Key="TextMuted" Color="#B8B5C9"/>
-        <Style x:Key="TabButton" TargetType="Button">
-            <Setter Property="Background" Value="#353044"/>
-            <Setter Property="Foreground" Value="#F6F3FF"/>
+        <LinearGradientBrush x:Key="IslandBackground" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#F31B1734" Offset="0"/>
+            <GradientStop Color="#F60C0D1D" Offset="1"/>
+        </LinearGradientBrush>
+        <RadialGradientBrush x:Key="AvatarGradient" GradientOrigin="0.35,0.18"
+                             Center="0.46,0.4" RadiusX="0.75" RadiusY="0.8">
+            <GradientStop Color="#F6ECFF" Offset="0"/>
+            <GradientStop Color="#C08AFF" Offset="0.44"/>
+            <GradientStop Color="#7953D7" Offset="0.78"/>
+            <GradientStop Color="#52349E" Offset="1"/>
+        </RadialGradientBrush>
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Background" Value="#393052"/>
+            <Setter Property="Foreground" Value="#F4F0FF"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Padding" Value="14,9"/>
             <Setter Property="Margin" Value="0,0,7,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="12"
-                                Padding="{TemplateBinding Padding}">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="14" Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="SoftText" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+        <Style x:Key="Caption" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#B7AFCB"/>
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
+        <Style x:Key="DeviceCard" TargetType="Border">
+            <Setter Property="Background" Value="#49392E56"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Margin" Value="0,0,0,7"/>
+        </Style>
         <Storyboard x:Key="Breathe" RepeatBehavior="Forever" AutoReverse="True">
-            <DoubleAnimation Storyboard.TargetName="CharacterScale" Storyboard.TargetProperty="ScaleX"
-                             To="1.035" Duration="0:0:1.8"/>
-            <DoubleAnimation Storyboard.TargetName="CharacterScale" Storyboard.TargetProperty="ScaleY"
-                             To="0.97" Duration="0:0:1.8"/>
+            <DoubleAnimation Storyboard.TargetName="AvatarScale"
+                             Storyboard.TargetProperty="ScaleX" To="1.055" Duration="0:0:1.7"/>
+            <DoubleAnimation Storyboard.TargetName="AvatarScale"
+                             Storyboard.TargetProperty="ScaleY" To="0.965" Duration="0:0:1.7"/>
         </Storyboard>
     </Window.Resources>
-    <Border CornerRadius="30" Background="#F4232030" BorderBrush="#776B6484"
-            BorderThickness="1" MouseLeftButtonDown="Shell_MouseLeftButtonDown">
+    <Border x:Name="IslandShell" CornerRadius="34"
+            BorderThickness="1.5" BorderBrush="#CE9F72FF"
+            Background="{StaticResource IslandBackground}"
+            MouseLeftButtonDown="Island_MouseLeftButtonDown">
         <Border.Effect>
-            <DropShadowEffect BlurRadius="22" ShadowDepth="4" Opacity="0.35" Color="#000000"/>
+            <DropShadowEffect Color="#A666FF" BlurRadius="31" ShadowDepth="0" Opacity="0.65"/>
         </Border.Effect>
-        <StackPanel>
-            <Grid Height="86">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="96"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="52"/>
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0" Width="74" Height="66" Cursor="Hand"
-                      MouseLeftButtonUp="Character_Click" ToolTip="Погладь Nook!">
-                    <Ellipse Fill="#B8A7FF" Stroke="#E4D9FF" StrokeThickness="2">
-                        <Ellipse.RenderTransform>
-                            <ScaleTransform x:Name="CharacterScale" CenterX="0.5" CenterY="0.5"/>
-                        </Ellipse.RenderTransform>
-                    </Ellipse>
-                    <Ellipse Fill="#66F5EAFF" Width="43" Height="16" Margin="-8,3,0,0"
-                             VerticalAlignment="Top" HorizontalAlignment="Center"/>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
-                                HorizontalAlignment="Center" Margin="0,4,0,0">
-                        <Ellipse x:Name="LeftEye" Width="6" Height="10" Fill="#302440" Margin="0,0,13,0"/>
-                        <Ellipse x:Name="RightEye" Width="6" Height="10" Fill="#302440"/>
+        <Grid ClipToBounds="True">
+            <StackPanel>
+                <Grid Height="84">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="86"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="46"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" Width="65" Height="59" Cursor="Hand"
+                          MouseLeftButtonUp="Avatar_MouseLeftButtonUp"
+                          MouseEnter="Avatar_MouseEnter" ToolTip="Нажми на Nook">
+                        <Ellipse Fill="{StaticResource AvatarGradient}" Stroke="#DFC4FF" StrokeThickness="2">
+                            <Ellipse.Effect><DropShadowEffect Color="#B061FF" BlurRadius="16" ShadowDepth="0"/></Ellipse.Effect>
+                            <Ellipse.RenderTransform>
+                                <ScaleTransform x:Name="AvatarScale" CenterX="0.5" CenterY="0.5"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                        <Ellipse Width="46" Height="34" Fill="#DE1B1238"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Ellipse x:Name="EyeLeft" Fill="#FFFFFF" Width="6" Height="11" Margin="0,0,13,0"/>
+                            <Ellipse x:Name="EyeRight" Fill="#FFFFFF" Width="6" Height="11"/>
+                        </StackPanel>
+                        <TextBlock x:Name="Smile" Text="⌣" Foreground="#F9EBFF"
+                                   FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"
+                                   VerticalAlignment="Bottom" Margin="0,0,0,9" Visibility="Collapsed"/>
+                    </Grid>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Nook" Foreground="#FCF9FF" FontSize="21" FontWeight="Bold"/>
+                        <TextBlock x:Name="StatusText" Text="Я рядом · готов помогать"
+                                   Foreground="#C5B7DD" FontSize="11" Margin="0,3,0,0"
+                                   TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
-                    <TextBlock x:Name="Mouth" Text="ᴗ" Foreground="#5B426F"
-                               HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                               FontSize="18" Margin="0,0,0,5"/>
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                        <TextBlock x:Name="MouseIndicator" Text="🖱  Проверяем…" Foreground="#E0D5F6"
+                                   FontSize="11" TextTrimming="CharacterEllipsis" MaxWidth="105"/>
+                        <TextBlock Text="✦  островок" Foreground="#9C8DB8" FontSize="10"
+                                   HorizontalAlignment="Right" Margin="0,5,0,0"/>
+                    </StackPanel>
+                    <Button Grid.Column="3" Content="⌄" FontSize="23" Foreground="#F5E9FF"
+                            Background="Transparent" BorderThickness="0" Cursor="Hand"
+                            ToolTip="Развернуть Nook" Click="Expand_Click"/>
                 </Grid>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="nook" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource TextMain}"/>
-                    <TextBlock x:Name="StatusText" Text="Я рядом ✦" Foreground="{StaticResource TextMuted}"
-                               FontSize="12" Margin="0,3,0,0" TextTrimming="CharacterEllipsis"/>
-                </StackPanel>
-                <Button x:Name="ExpandButton" Grid.Column="2" Content="⌄" Click="Toggle_Click"
-                        Background="Transparent" Foreground="{StaticResource TextMain}"
-                        BorderThickness="0" FontSize="22" Cursor="Hand" ToolTip="Открыть Nook"/>
-            </Grid>
-            <StackPanel x:Name="Details" Visibility="Collapsed" Margin="18,0,18,18">
-                <Border Height="1" Background="#5B586C" Margin="0,0,0,13"/>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
-                    <Button Content="Устройства" Style="{StaticResource TabButton}" Click="Devices_Click"/>
-                    <Button Content="Агенты" Style="{StaticResource TabButton}" Click="Agents_Click"/>
-                    <Button Content="Настройки" Style="{StaticResource TabButton}" Click="Settings_Click" Margin="0"/>
-                </StackPanel>
-                <StackPanel x:Name="DevicesPanel">
-                    <TextBlock Text="Беспроводные устройства" Foreground="{StaticResource TextMain}"
-                               FontWeight="SemiBold" Margin="0,0,0,9"/>
-                    <TextBlock Text="🖱  Мышь — заряд пока недоступен" Style="{StaticResource SoftText}" Margin="0,0,0,8"/>
-                    <TextBlock Text="⌨  Клавиатура — заряд пока недоступен" Style="{StaticResource SoftText}" Margin="0,0,0,8"/>
-                    <TextBlock Text="🎧  Наушники — заряд пока недоступен" Style="{StaticResource SoftText}"/>
-                    <TextBlock Text="Поддержку USB-приёмников добавим после проверки протоколов устройств."
-                               Style="{StaticResource SoftText}" Margin="0,12,0,0" FontSize="11"/>
-                </StackPanel>
-                <StackPanel x:Name="AgentsPanel" Visibility="Collapsed">
-                    <TextBlock Text="ИИ-агенты" Foreground="{StaticResource TextMain}"
-                               FontWeight="SemiBold" Margin="0,0,0,9"/>
-                    <TextBlock Text="Codex · Claude · Gemini · Copilot" Style="{StaticResource SoftText}"/>
-                    <TextBlock Text="Подключение и отображение активности ещё в разработке."
-                               Style="{StaticResource SoftText}" Margin="0,11,0,0"/>
-                </StackPanel>
-                <StackPanel x:Name="SettingsPanel" Visibility="Collapsed">
-                    <TextBlock Text="Поведение Nook" Foreground="{StaticResource TextMain}"
-                               FontWeight="SemiBold" Margin="0,0,0,9"/>
-                    <CheckBox x:Name="ReactionSetting" Content="Реагировать на прикосновения"
-                              IsChecked="True" Foreground="{StaticResource TextMain}" Margin="0,0,0,10"/>
-                    <CheckBox x:Name="AlwaysOnTopSetting" Content="Поверх остальных окон"
-                              IsChecked="True" Checked="AlwaysOnTop_Changed" Unchecked="AlwaysOnTop_Changed"
-                              Foreground="{StaticResource TextMain}" Margin="0,0,0,10"/>
-                    <CheckBox x:Name="AnimationSetting" Content="Анимация дыхания"
-                              IsChecked="True" Checked="Animation_Changed" Unchecked="Animation_Changed"
-                              Foreground="{StaticResource TextMain}"/>
-                    <TextBlock Text="Параметры пока действуют до закрытия Nook."
-                               Style="{StaticResource SoftText}" Margin="0,14,0,0" FontSize="11"/>
+                <StackPanel x:Name="ExpandedContent" Opacity="0" Visibility="Collapsed" Margin="18,0,18,14">
+                    <Border Height="1" Background="#605B5684" Margin="0,0,0,13"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                        <Button Content="Устройства" Style="{StaticResource ActionButton}" Click="Devices_Click"/>
+                        <Button Content="Агенты" Style="{StaticResource ActionButton}" Click="Agents_Click"/>
+                        <Button Content="Настройки" Style="{StaticResource ActionButton}" Click="Settings_Click" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel x:Name="DevicesPanel">
+                        <DockPanel Margin="0,0,0,10">
+                            <Button Content="↻ Обновить" DockPanel.Dock="Right" Click="Refresh_Click"
+                                    Style="{StaticResource ActionButton}" Margin="0"/>
+                            <TextBlock Text="Подключённые устройства" Foreground="#F9F4FF"
+                                       VerticalAlignment="Center" FontWeight="SemiBold" FontSize="15"/>
+                        </DockPanel>
+                        <Border Style="{StaticResource DeviceCard}">
+                            <DockPanel>
+                                <TextBlock Text="🖱" FontSize="23" DockPanel.Dock="Left" Margin="0,0,13,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="Мышь" Foreground="#FCF9FF" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="MouseName" Text="Ищем устройства Windows…"
+                                               Style="{StaticResource Caption}" Margin="0,3,0,0"/>
+                                    <TextBlock x:Name="MouseBattery" Text="Заряд: неизвестен"
+                                               Foreground="#D7AFFF" FontSize="11" Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+                        <Border Style="{StaticResource DeviceCard}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⌨" FontSize="22" Margin="0,0,12,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="Клавиатура" Foreground="#FCF9FF" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Определение модели — следующий этап"
+                                               Style="{StaticResource Caption}" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource DeviceCard}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🎧" FontSize="22" Margin="0,0,12,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="Наушники" Foreground="#FCF9FF" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Заряд по USB-приёмнику пока недоступен"
+                                               Style="{StaticResource Caption}" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock x:Name="DetectionHint" Style="{StaticResource Caption}"
+                                   Text="Проверяем подключённые мыши через Windows. Это не измерение батареи."
+                                   FontSize="11" Margin="1,4,0,0"/>
+                    </StackPanel>
+                    <StackPanel x:Name="AgentsPanel" Visibility="Collapsed">
+                        <TextBlock Text="Агенты" Foreground="#FCF9FF" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                        <Border Style="{StaticResource DeviceCard}">
+                            <TextBlock Text="✦  Codex     ·     Claude     ·     Gemini     ·     Copilot"
+                                       Style="{StaticResource Caption}" />
+                        </Border>
+                        <TextBlock Text="Это макет раздела. Авторизация и работа агентов ещё не подключены."
+                                   Style="{StaticResource Caption}" Margin="0,10,0,0"/>
+                    </StackPanel>
+                    <StackPanel x:Name="SettingsPanel" Visibility="Collapsed">
+                        <TextBlock Text="Настройки персонажа" Foreground="#FCF9FF" FontWeight="SemiBold"
+                                   FontSize="16" Margin="0,0,0,15"/>
+                        <CheckBox x:Name="ReactionSetting" IsChecked="True" Content="Реагировать на нажатия"
+                                  Foreground="#EEE6FA" Margin="0,0,0,12"/>
+                        <CheckBox x:Name="AnimationSetting" IsChecked="True" Content="Плавная анимация"
+                                  Foreground="#EEE6FA" Checked="AnimationSetting_Changed"
+                                  Unchecked="AnimationSetting_Changed" Margin="0,0,0,12"/>
+                        <CheckBox x:Name="TopmostSetting" IsChecked="True" Content="Поверх остальных окон"
+                                  Foreground="#EEE6FA" Checked="TopmostSetting_Changed"
+                                  Unchecked="TopmostSetting_Changed" Margin="0,0,0,12"/>
+                        <TextBlock Text="Настройки пока сохраняются только до закрытия приложения."
+                                   Style="{StaticResource Caption}" Margin="0,10,0,0"/>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
-        </StackPanel>
+        </Grid>
     </Border>
 </Window>
