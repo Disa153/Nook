@@ -1,0 +1,32 @@
+name: Windows prototype
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Build
+        run: dotnet build src/Nook/Nook.csproj -c Release
+      - name: Publish self-contained x64 executable
+        run: dotnet publish src/Nook/Nook.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+      - name: Package
+        shell: pwsh
+        run: Compress-Archive -Path publish/* -DestinationPath Nook-Windows-x64.zip
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nook-Windows-x64
+          path: Nook-Windows-x64.zip
+          if-no-files-found: error
